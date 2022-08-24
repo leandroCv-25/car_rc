@@ -6,7 +6,7 @@
 
 static const char *TAG = "servo";
 
-static uint32_t g_full_duty = (1 << SERVO_LEDC_INIT_BITS) - 1;;
+static uint32_t g_full_duty =0;
 static servo_config_t g_cfg;
 
 static uint32_t calculate_duty(float angle)
@@ -32,8 +32,8 @@ esp_err_t servo_set_angle(float angle)
     }
     
     uint32_t duty = calculate_duty(angle);
-    esp_err_t ret = ledc_set_duty(SERVO_SPEEDMODE, SERVO_CHANNEL, duty);
-    ret |= ledc_update_duty(SERVO_SPEEDMODE, SERVO_CHANNEL);
+    esp_err_t ret = ledc_set_duty(g_cfg.speed_mode, g_cfg.channel, duty);
+    ret |= ledc_update_duty(g_cfg.speed_mode, g_cfg.channel);
 
     if (ret != ESP_OK)
     {
@@ -59,14 +59,16 @@ esp_err_t servo_init(const servo_config_t *config)
         return ESP_ERR_INVALID_ARG;
     }
 
-     g_cfg = *config;
+    g_cfg = *config;
+
+    g_full_duty = (1 << g_cfg.resolution) - 1;
 
     ledc_timer_config_t ledc_timer = {
         .clk_cfg = LEDC_AUTO_CLK,
-        .duty_resolution = SERVO_LEDC_INIT_BITS, // resolution of PWM duty
-        .freq_hz = config->freq,                 // frequency of PWM signal
-        .speed_mode = SERVO_SPEEDMODE,           // timer mode
-        .timer_num = SERVO_TIMER                 // timer index
+        .duty_resolution = g_cfg.resolution, // resolution of PWM duty
+        .freq_hz = g_cfg.freq,                 // frequency of PWM signal
+        .speed_mode = g_cfg.speed_mode,           // timer mode
+        .timer_num = g_cfg.timer                 // timer index
     };
     ret = ledc_timer_config(&ledc_timer);
 
@@ -78,11 +80,11 @@ esp_err_t servo_init(const servo_config_t *config)
 
     ledc_channel_config_t ledc_ch = {
         .intr_type = LEDC_INTR_DISABLE,
-        .channel = SERVO_CHANNEL,
+        .channel = g_cfg.channel,
         .duty = calculate_duty(20),
-        .gpio_num = SERVO_GPIO,
-        .speed_mode = SERVO_SPEEDMODE,
-        .timer_sel = SERVO_TIMER,
+        .gpio_num = g_cfg.gpio,
+        .speed_mode = g_cfg.speed_mode,
+        .timer_sel = g_cfg.timer,
         .hpoint = 0};
     
     ret = ledc_channel_config(&ledc_ch);
