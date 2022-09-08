@@ -5,7 +5,10 @@
     "servo.h": "c",
     "*.inc": "c",
     "dac.h": "c",
-    "esp_err.h": "c"
+    "esp_err.h": "c",
+    "scheme_softap.h": "c",
+    "wifi_app.h": "c",
+    "format": "c"
   },
   "idf.flashType": "UART",
   "idf.portWin": "COM3",
