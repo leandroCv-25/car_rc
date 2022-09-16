@@ -11,19 +11,21 @@
 #include "drive_motor.h"
 #include "esp_log.h"
 #include "wifi_reset_button.h"
+#include "http_server.h"
+#include "camera.h"
 
 static const char TAG[] = "main";
 
 void wifi_application_connected_events(void)
 {
 	ESP_LOGI(TAG, "WiFi Application Connected!!");
-    //aws_iot_start();
+    http_server_start();
 }
 
 void app_main(void)
 {
     //PIN button
-    gpio_num_t WIFI_RESET_BUTTON = GPIO_NUM_0;
+    gpio_num_t WIFI_RESET_BUTTON = GPIO_NUM_2;
 
     // INITIALISE NVS
     esp_err_t ret = nvs_flash_init();
@@ -41,6 +43,8 @@ void app_main(void)
     wifi_reset_button_config(WIFI_RESET_BUTTON);
 
     wifi_app_set_callback(&wifi_application_connected_events);
+
+    camera_init();
 
     // servo_config_t servo_cfg_ls = {
     //     .max_angle = 180,

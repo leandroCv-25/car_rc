@@ -54,22 +54,7 @@ static void wifi_app_event_handler(void *arg, esp_event_base_t event_base, int32
     {
         switch (event_id)
         {
-        case WIFI_EVENT_AP_START:
-            ESP_LOGI(TAG, "WIFI_EVENT_AP_START");
-            break;
-
-        case WIFI_EVENT_AP_STOP:
-            ESP_LOGI(TAG, "WIFI_EVENT_AP_STOP");
-            break;
-
-        case WIFI_EVENT_AP_STACONNECTED:
-            ESP_LOGI(TAG, "WIFI_EVENT_AP_STACONNECTED");
-            break;
-
-        case WIFI_EVENT_AP_STADISCONNECTED:
-            ESP_LOGI(TAG, "WIFI_EVENT_AP_STADISCONNECTED");
-            break;
-
+    
         case WIFI_EVENT_STA_START:
             ESP_LOGI(TAG, "WIFI_EVENT_STA_START");
             break;
@@ -104,7 +89,8 @@ static void wifi_app_event_handler(void *arg, esp_event_base_t event_base, int32
         {
         case IP_EVENT_STA_GOT_IP:
             ESP_LOGI(TAG, "IP_EVENT_STA_GOT_IP");
-
+            ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
+        ESP_LOGI(TAG, "Connected with IP Address:" IPSTR, IP2STR(&event->ip_info.ip));
             wifi_app_send_message(WIFI_APP_MSG_STA_CONNECTED_GOT_IP);
 
             break;
@@ -145,7 +131,7 @@ static void wifi_app_event_handler(void *arg, esp_event_base_t event_base, int32
         case WIFI_PROV_CRED_SUCCESS:
             ESP_LOGI(TAG, "Provisioning successful");
             retries = 0;
-            esp_wifi_get_config(ESP_IF_WIFI_AP, wifi_config);
+            esp_wifi_get_config(ESP_IF_WIFI_STA, wifi_config);
 
             nvs_app_save_sta_creds();
             break;
