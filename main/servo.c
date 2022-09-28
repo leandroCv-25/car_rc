@@ -11,6 +11,7 @@ static servo_config_t g_cfg;
 
 static uint32_t calculate_duty(float angle)
 {
+    angle += 25.5f;
     float angle_us = angle / g_cfg.max_angle * (g_cfg.max_width_us - g_cfg.min_width_us) + g_cfg.min_width_us;
     ESP_LOGI(TAG, "angle us: %f", angle_us);
     uint32_t duty = g_full_duty- (uint32_t)((float)g_full_duty * (angle_us) * g_cfg.freq / (1000000.0f));
@@ -20,15 +21,13 @@ static uint32_t calculate_duty(float angle)
 
 esp_err_t servo_set_angle(float angle)
 {
-    if (angle < 7.0f)
+    if (angle < -18.5f) // 7
     {
-        ESP_LOGE(TAG, "Angle can't to be less than 7");
-        return ESP_ERR_INVALID_ARG;
+       angle = -18.5f;
     }
-    if (angle > 44.0f)
+    if (angle > 18.5f) //44
     {
-        ESP_LOGE(TAG, "Angle can't to be more than 44");
-        return ESP_ERR_INVALID_ARG;
+        angle = 18.5f;
     }
     
     uint32_t duty = calculate_duty(angle);
@@ -81,7 +80,7 @@ esp_err_t servo_init(const servo_config_t *config)
     ledc_channel_config_t ledc_ch = {
         .intr_type = LEDC_INTR_DISABLE,
         .channel = g_cfg.channel,
-        .duty = calculate_duty(20),
+        .duty = calculate_duty(0),
         .gpio_num = g_cfg.gpio,
         .speed_mode = g_cfg.speed_mode,
         .timer_sel = g_cfg.timer,

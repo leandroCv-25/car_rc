@@ -10,7 +10,13 @@
     "wifi_app.h": "c",
     "format": "c",
     "http_server.h": "c",
-    "tasks_common.h": "c"
+    "tasks_common.h": "c",
+    "util.h": "c",
+    "type_traits": "c",
+    "drive_motor.h": "c",
+    "camera.h": "c",
+    "freertos.h": "c",
+    "*.ipp": "c"
   },
   "idf.flashType": "UART",
   "idf.portWin": "COM6",
