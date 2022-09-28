@@ -4,11 +4,11 @@
 #include "esp_camera.h"
 
 /**
- * @brief async send  camera frame function
+ * @brief send  camera frame to queue
  * 
  * @param frame camera_fb_t
  */
- void ws_frame_async_send(camera_fb_t *frame);
+ BaseType_t frame_send(camera_fb_t *frame);
 
 /**
  * @brief Starts the HTTP server.

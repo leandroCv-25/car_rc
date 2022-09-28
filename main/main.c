@@ -61,10 +61,10 @@ static camera_config_t camera_config = {
     .pixel_format = PIXFORMAT_JPEG, // YUV422,GRAYSCALE,RGB565,JPEG
     .frame_size = FRAMESIZE_QVGA,   // QQVGA-QXGA Do not use sizes above QVGA when not JPEG
 
-    .jpeg_quality = 12,                 // 0-63 lower number means higher quality
-    .fb_count = 1,                      // if more than one, i2s runs in continuous mode. Use only with JPEG
-    .grab_mode = CAMERA_GRAB_WHEN_EMPTY // CAMERA_GRAB_LATEST. Sets when buffers should be filled
-   
+    .jpeg_quality = 40,                 // 0-63 lower number means higher quality
+    .fb_count = 2,                      // if more than one, i2s runs in continuous mode. Use only with JPEG
+    .grab_mode = CAMERA_GRAB_LATEST, // CAMERA_GRAB_LATEST. Sets when buffers should be filled
+    .fb_location = CAMERA_FB_IN_PSRAM
 };
 
 static servo_config_t servoCfgLs = {
@@ -101,7 +101,7 @@ void wifi_application_connected_events(void)
 void app_main(void)
 {
     // PIN button
-    gpio_num_t WIFI_RESET_BUTTON = GPIO_NUM_13;
+    // gpio_num_t WIFI_RESET_BUTTON = GPIO_NUM_13;
 
     // INITIALISE NVS
     esp_err_t ret = nvs_flash_init();
@@ -116,7 +116,7 @@ void app_main(void)
     wifi_app_start();
 
     // Configure Wifi reset button
-    wifi_reset_button_config(WIFI_RESET_BUTTON);
+    // wifi_reset_button_config(WIFI_RESET_BUTTON);
 
     wifi_app_set_callback(&wifi_application_connected_events);
 }

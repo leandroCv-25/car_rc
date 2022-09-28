@@ -12,10 +12,9 @@
 // Tag used for ESP serial console messages
 static const char TAG[] = "Camera";
 
-camera_fb_t *frame;
-
 static void camera_task(void *pvParameters)
 {
+    camera_fb_t *frame;
 
     while (true)
     {
@@ -24,15 +23,15 @@ static void camera_task(void *pvParameters)
         {
             if (frame->format == PIXFORMAT_JPEG)
             {
-                ws_frame_async_send(frame);
+                ESP_LOGI(TAG, "prepare to send frame");
+                frame_send(frame);
             }
             else
             {
                 ESP_LOGE(TAG, "JPEG compression failed");
             }
+            // vTaskDelay(20 / portTICK_PERIOD_MS);
         }
-
-        vTaskDelay(20 / portTICK_RATE_MS);
     }
 }
 
