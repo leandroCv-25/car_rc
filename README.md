@@ -1,4 +1,3 @@
-# Project 1
+# Project Car RC
 
-Projeto de desenvolvimento de sistemas embarcados com esp32
-Objetivo desenvolver um monitoramento de condições ambientais integrado ao AWS. 
+Projeto de desenvolvimento de carrinho RC com camera conectado ao aplicativo.
