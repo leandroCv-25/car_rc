@@ -16,7 +16,10 @@
     "drive_motor.h": "c",
     "camera.h": "c",
     "freertos.h": "c",
-    "*.ipp": "c"
+    "*.ipp": "c",
+    "array": "c",
+    "string": "c",
+    "string_view": "c"
   },
   "idf.flashType": "UART",
   "idf.portWin": "COM3",
