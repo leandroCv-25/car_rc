@@ -9,6 +9,7 @@
 #include "wifi_app.h"
 #include "http_server.h"
 #include "camera.h"
+#include "rgb_led.h"
 
 #define CAM_PIN_PWDN 32
 #define CAM_PIN_RESET -1 //software reset will be performed
@@ -61,12 +62,6 @@ static camera_config_t camera_config = {
     .fb_location = CAMERA_FB_IN_PSRAM
 };
 
-void wifi_application_connected_events(void)
-{
-    camera_init(&camera_config);
-    http_server_start();
-}
-
 void app_main(void)
 {
 
@@ -79,11 +74,11 @@ void app_main(void)
     }
     ESP_ERROR_CHECK(ret);
 
+    rgb_led_config(GPIO_NUM_23, GPIO_NUM_22, GPIO_NUM_21, LEDC_TIMER_0, LEDC_CHANNEL_3, LEDC_CHANNEL_4, LEDC_CHANNEL_5);
+    
     //start Wi_FI
     wifi_app_start("CAR_AP","password");
 
-    // Configure Wifi reset button
-    // wifi_reset_button_config(WIFI_RESET_BUTTON);
-
-    wifi_app_set_callback(&wifi_application_connected_events);
+    camera_init(&camera_config);
+    http_server_start();
 }

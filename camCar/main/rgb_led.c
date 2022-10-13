@@ -86,10 +86,10 @@ static void rgb_led_pwm_init(void)
     }
 }
 
-// sets the RGB color
-static void rgb_led_set_color(uint8_t red, uint8_t green, uint8_t blue)
-{
-    // value should be 0 - 255 for 8 bit number
+
+//sets the RGB color
+static void rgb_led_set_color(uint8_t red, uint8_t green, uint8_t blue){
+    //value should be 0 - 255 for 8 bit number
     ledc_set_duty(ledc_ch[0].mode, ledc_ch[0].channel, red);
     ledc_update_duty(ledc_ch[0].mode, ledc_ch[0].channel);
 
@@ -100,34 +100,28 @@ static void rgb_led_set_color(uint8_t red, uint8_t green, uint8_t blue)
     ledc_update_duty(ledc_ch[2].mode, ledc_ch[2].channel);
 }
 
-// Color to indicate WiFi aplication has started
-void rgb_led_car_connected(void)
-{
-    if (pwm_init_handle == false)
-    {
-        rgb_led_pwm_init();
+//Color to indicate WiFi aplication has started
+void rgb_led_wifi_app_started(void){
+    if(pwm_init_handle==false){
+         rgb_led_pwm_init();
     }
-
-    rgb_led_set_color(0, 255, 0);
+   
+    rgb_led_set_color(255,102,255);
 }
 
-void rgb_led_car_error(void)
-{
-    if (pwm_init_handle == false)
-    {
-        rgb_led_pwm_init();
+void rgb_led_http_server_started(void){
+    if(pwm_init_handle==false){
+         rgb_led_pwm_init();
     }
-
-    rgb_led_set_color(255, 0, 0);
+   
+    rgb_led_set_color(204,255,51);
 }
 
-// Color to indicate Wifi is connected
-void rgb_led_car_waiting(void)
-{
-    if (pwm_init_handle == false)
-    {
-        rgb_led_pwm_init();
+//Color to indicate Wifi is connected
+void rgb_led_wifi_connected(void){
+    if(pwm_init_handle==false){
+         rgb_led_pwm_init();
     }
-
-    rgb_led_set_color(0, 0, 255);
+   
+    rgb_led_set_color(0,255,153);
 }

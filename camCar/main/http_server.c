@@ -11,6 +11,7 @@
 #include "http_server.h"
 #include "camera.h"
 #include "tasks_common.h"
+#include "rgb_led.h"
 
 // Tag used for ESP serial console messages
 static const char TAG[] = "http_server";
@@ -92,6 +93,9 @@ static esp_err_t stream_handler(httpd_req_t *req)
  */
 static httpd_handle_t http_server_configure(void)
 {
+
+    rgb_led_http_server_started();
+
     // Generate the default configuration
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
 
