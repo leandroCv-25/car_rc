@@ -57,7 +57,7 @@ static void comunication_event_handler(void *handler_args, esp_event_base_t base
 	{
 		espnow_ctrl_bind_info_t *info = (espnow_ctrl_bind_info_t *)event_data;
 		ESP_LOGI(TAG, "bind, uuid: " MACSTR ", initiator_type: %d", MAC2STR(info->mac), info->initiator_attribute);
-
+		s_espnow_ctrl_status = ESPNOW_CTRL_BOUND;
 		rgb_led_car_connected();
 		break;
 	}
@@ -66,7 +66,7 @@ static void comunication_event_handler(void *handler_args, esp_event_base_t base
 	{
 		espnow_ctrl_bind_info_t *info = (espnow_ctrl_bind_info_t *)event_data;
 		ESP_LOGI(TAG, "unbind, uuid: " MACSTR ", initiator_type: %d", MAC2STR(info->mac), info->initiator_attribute);
-
+		s_espnow_ctrl_status = ESPNOW_CTRL_INIT;
 		rgb_led_car_waiting();
 		break;
 	}
@@ -98,14 +98,14 @@ static esp_err_t receive_data_handle(uint8_t *src_addr, void *data,
 	ESP_LOGI(TAG, "espnow_recv, <%d> [" MACSTR "][%d][%d][%d]: %.*s",
 			 count++, MAC2STR(src_addr), rx_ctrl->channel, rx_ctrl->rssi, size, size, (char *)data);
 
-	double angle;
-	double aceleration;
+	float angle;
+	float aceleration;
 	unsigned int light;
 	char gear;
 
 	
 
-	sscanf(data, "{\"angle\":%le,\"aceleration\":%le,\"light\":%u,\"gear\":%c}", &angle, &aceleration, &light, &gear);
+	sscanf(data, "{\"angle\":%f,\"aceleration\":%f,\"light\":%u,\"gear\":%c}", &angle, &aceleration, &light, &gear);
 
 	headlight_set(light);
 

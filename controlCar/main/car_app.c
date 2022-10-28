@@ -50,7 +50,7 @@ static void car_app_task(void *pvParameters)
     }
 }
 
-BaseType_t car_app_send_message(car_app_message_e msgID, double powerDriverMotor, double steringAngle)
+BaseType_t car_app_send_message(car_app_message_e msgID, float powerDriverMotor, float steringAngle)
 {
     car_app_queue_message_t msg;
     msg.msgID = msgID;
