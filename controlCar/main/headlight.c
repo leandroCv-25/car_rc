@@ -5,6 +5,7 @@
 static gpio_num_t headlightGPIO;
 bool headlight_init_handle = false;
 bool headlight_config_handle = false;
+bool headlight_status = false;
 
 void headlight_config(gpio_num_t led)
 {
@@ -21,15 +22,19 @@ static void headLight_init(void)
         gpio_set_direction(headlightGPIO, GPIO_MODE_OUTPUT);
 
         headlight_init_handle = true;
+        gpio_set_level(headlightGPIO, headlight_status);
+        
     }
 }
 
-void headlight_set(bool value)
+void headlight_toggle()
 {
     if (headlight_init_handle == false)
     {
         headLight_init();
     }
 
-    gpio_set_level(headlightGPIO, value);
+    headlight_status = !headlight_status;
+
+    gpio_set_level(headlightGPIO, headlight_status);
 }

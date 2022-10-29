@@ -98,7 +98,7 @@ static void remote_app_task(void *pvParameters)
             comunication_send(ACELERATION_CONTROL_DATA, 0);
         }
 
-        vTaskDelay(500 / portTICK_PERIOD_MS);
+        vTaskDelay(50 / portTICK_PERIOD_MS);
     }
 }
 

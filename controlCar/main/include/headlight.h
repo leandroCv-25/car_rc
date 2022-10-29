@@ -5,6 +5,6 @@
 
 void headlight_config(gpio_num_t led);
 
-void headlight_set(bool value);
+void headlight_toggle();
 
 #endif

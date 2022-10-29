@@ -18,7 +18,7 @@ static void car_app_task(void *pvParameters)
     car_app_queue_message_t msg;
 
     // Send first event message
-    car_app_send_message(CAR_STOP, 0.0, 0.0);
+    car_app_send_message(CAR_STOP, 0.0);
 
     while (true)
     {
@@ -28,21 +28,20 @@ static void car_app_task(void *pvParameters)
             {
             case CAR_STOP:
                 ESP_LOGI(TAG, "car stop");
-                servo_set_angle(msg.steringAngle);
                 drive_motor_break();
                 break;
             case CAR_DRIVE:
                 ESP_LOGI(TAG, "car drive");
-                servo_set_angle(msg.steringAngle);
-                drive_motor_forward(msg.powerDriverMotor);
+                drive_motor_forward(msg.data);
 
                 break;
             case CAR_REVERSE:
                 ESP_LOGI(TAG, "car reverse");
-                servo_set_angle(msg.steringAngle);
-                drive_motor_reverse(msg.powerDriverMotor);
+                drive_motor_reverse(msg.data);
                 break;
-
+            case CAR_STERING:
+                ESP_LOGI(TAG, "car stering");
+                servo_set_angle(msg.data);
             default:
                 break;
             }
@@ -50,12 +49,11 @@ static void car_app_task(void *pvParameters)
     }
 }
 
-BaseType_t car_app_send_message(car_app_message_e msgID, float powerDriverMotor, float steringAngle)
+BaseType_t car_app_send_message(car_app_message_e msgID, float data)
 {
     car_app_queue_message_t msg;
     msg.msgID = msgID;
-    msg.powerDriverMotor = powerDriverMotor;
-    msg.steringAngle = steringAngle;
+    msg.data = data;
     return xQueueSend(car_app_queue_handle, &msg, portMAX_DELAY);
 }
 

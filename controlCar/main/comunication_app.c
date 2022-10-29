@@ -25,7 +25,7 @@
 static const char TAG[] = "comunication_app";
 
 // control status
-static espnow_ctrl_status_t s_espnow_ctrl_status = ESPNOW_CTRL_INIT;
+static espnow_ctrl_status_t s_espnow_ctrl_status;
 
 static void wifi_init(void)
 {
@@ -44,36 +44,32 @@ static void wifi_init(void)
 	ESP_ERROR_CHECK(esp_wifi_start());
 }
 
-static void comunication_event_handler(void *handler_args, esp_event_base_t base, int32_t id, void *event_data)
+static void espnow_event_handler(void* handler_args, esp_event_base_t base, int32_t id, void* event_data)
 {
-	if (base != ESP_EVENT_ESPNOW)
-	{
-		return;
-	}
+    if (base != ESP_EVENT_ESPNOW) {
+        return;
+    }
 
-	switch (id)
-	{
-	case ESP_EVENT_ESPNOW_CTRL_BIND:
-	{
-		espnow_ctrl_bind_info_t *info = (espnow_ctrl_bind_info_t *)event_data;
-		ESP_LOGI(TAG, "bind, uuid: " MACSTR ", initiator_type: %d", MAC2STR(info->mac), info->initiator_attribute);
-		s_espnow_ctrl_status = ESPNOW_CTRL_BOUND;
-		rgb_led_car_connected();
-		break;
-	}
+    switch (id) {
+        case ESP_EVENT_ESPNOW_CTRL_BIND: {
+            espnow_ctrl_bind_info_t *info = (espnow_ctrl_bind_info_t *)event_data;
+            ESP_LOGI(TAG, "bind, uuid: " MACSTR ", initiator_type: %d", MAC2STR(info->mac), info->initiator_attribute);
+            
+            rgb_led_car_connected();
+            break;
+        }
 
-	case ESP_EVENT_ESPNOW_CTRL_UNBIND:
-	{
-		espnow_ctrl_bind_info_t *info = (espnow_ctrl_bind_info_t *)event_data;
-		ESP_LOGI(TAG, "unbind, uuid: " MACSTR ", initiator_type: %d", MAC2STR(info->mac), info->initiator_attribute);
-		s_espnow_ctrl_status = ESPNOW_CTRL_INIT;
-		rgb_led_car_waiting();
-		break;
-	}
+        case ESP_EVENT_ESPNOW_CTRL_UNBIND: {
+            espnow_ctrl_bind_info_t *info = (espnow_ctrl_bind_info_t *)event_data;
+            ESP_LOGI(TAG, "unbind, uuid: " MACSTR ", initiator_type: %d", MAC2STR(info->mac), info->initiator_attribute);
+            
+           	rgb_led_car_waiting();
+            break;
+        }
 
-	default:
-		break;
-	}
+        default:
+        break;
+    }
 }
 
 static void comunication_app_event_handler_init(void)
@@ -82,66 +78,38 @@ static void comunication_app_event_handler_init(void)
 	espnow_config_t espnow_config = ESPNOW_INIT_CONFIG_DEFAULT();
 	espnow_init(&espnow_config);
 
-	esp_event_handler_register(ESP_EVENT_ESPNOW, ESP_EVENT_ANY_ID, comunication_event_handler, NULL);
+	esp_event_handler_register(ESP_EVENT_ESPNOW, ESP_EVENT_ANY_ID, espnow_event_handler, NULL);
 }
 
-static esp_err_t receive_data_handle(uint8_t *src_addr, void *data,
-									 size_t size, wifi_pkt_rx_ctrl_t *rx_ctrl)
+static void espnow_ctrl_responder_data_cb(espnow_attribute_t initiator_attribute,
+                                     espnow_attribute_t responder_attribute,
+                                     uint32_t data)
 {
-	ESP_PARAM_CHECK(src_addr);
-	ESP_PARAM_CHECK(data);
-	ESP_PARAM_CHECK(size);
-	ESP_PARAM_CHECK(rx_ctrl);
+    ESP_LOGI(TAG, "espnow_ctrl_responder_recv, initiator_attribute: %d, responder_attribute: %d, value: %d",
+                initiator_attribute, responder_attribute, data);
+	switch(responder_attribute){
+		case 0:
+			ESP_LOGI(TAG,"Angle: %f",(float)data/100);
+			car_app_send_message(CAR_STERING,(float)data/100);
+			break;
+		case 1:
+			ESP_LOGI(TAG,"Headlight: Toggle");
+			headlight_toggle();
+			break;
+		case 2:
+			ESP_LOGI(TAG,"Aceleration: %d",data);
+			if(data>0){
+				car_app_send_message(CAR_DRIVE,data);
+			}else if(data<0){
+				car_app_send_message(CAR_REVERSE,data);
+			} else{
+				car_app_send_message(CAR_STOP,0);
+			}
+			break;
 
-	static uint32_t count = 0;
-
-	ESP_LOGI(TAG, "espnow_recv, <%d> [" MACSTR "][%d][%d][%d]: %.*s",
-			 count++, MAC2STR(src_addr), rx_ctrl->channel, rx_ctrl->rssi, size, size, (char *)data);
-
-	float angle;
-	float aceleration;
-	unsigned int light;
-	char gear;
-
-	
-
-	sscanf(data, "{\"angle\":%f,\"aceleration\":%f,\"light\":%u,\"gear\":%c}", &angle, &aceleration, &light, &gear);
-
-	headlight_set(light);
-
-	switch (gear)
-	{
-	case 'D':
-		car_app_send_message(CAR_DRIVE, aceleration, angle);
+		default:
+			ESP_LOGI(TAG,"comando %d dado %d",responder_attribute,data);
 		break;
-	case 'R':
-		car_app_send_message(CAR_REVERSE, aceleration, angle);
-		break;
-	default:
-		car_app_send_message(CAR_STOP, aceleration, angle);
-		break;
-	}
-
-	return ESP_OK;
-}
-
-/**
- * Main task for the Comunication application
- * @param pvParameters parameter which can be passed to the task
- */
-static void comunication_app_task(void *pvParameters)
-{
-	// Initialize the event handler
-	comunication_app_event_handler_init();
-
-	// Initialize the TCP/IP stack and WiFi config
-	wifi_init();
-
-	espnow_set_type(ESPNOW_TYPE_DATA, 1, receive_data_handle);
-
-	while (true)
-	{
-		vTaskDelay(100 / portTICK_PERIOD_MS);
 	}
 }
 
@@ -151,10 +119,15 @@ void comunication_app_start(void)
 
 	// Start WiFi started LED
 	rgb_led_car_waiting();
+	s_espnow_ctrl_status = ESPNOW_CTRL_INIT;
+	
 
 	// Disable default WiFi logging messages
 	esp_log_level_set("wifi", ESP_LOG_NONE);
+	wifi_init();
+	
+	comunication_app_event_handler_init();
 
-	// Start the WiFi application task
-	xTaskCreatePinnedToCore(&comunication_app_task, "comunication_app_task", COMUNICATION_APP_TASK_STACK_SIZE, NULL, COMUNICATION_APP_TASK_PRIORITY, NULL, COMUNICATION_APP_TASK_CORE_ID);
+	ESP_ERROR_CHECK(espnow_ctrl_responder_bind(30 * 1000, -55, NULL));
+    espnow_ctrl_responder_data(espnow_ctrl_responder_data_cb);
 }

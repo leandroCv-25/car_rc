@@ -9,6 +9,7 @@
  */
 typedef enum car_app_message
 {
+    CAR_STERING,
     CAR_STOP,
     CAR_DRIVE,
     CAR_REVERSE,
@@ -21,20 +22,17 @@ typedef enum car_app_message
 typedef struct car_app_queue_message
 {
     car_app_message_e msgID;
-    float powerDriverMotor;
-    float steringAngle;
+    float data;
 } car_app_queue_message_t;
 
 /**
  * Sends a message to the queue
  * @param msgID message ID from the car_app_message_e enum.
- * @param powerDriverMotor double Porcentage power drive car.
- * @param steringAngle double Stering angle.
- * @param msgID message ID from the car_app_message_e enum.
+ * @param data double data drive car.
  * @return pdTRUE if an item was successfully sent to the queue, otherwise pdFALSE.
  * @note Expand the parameter list based on your requirements e.g. how you've expanded the wifi_app_queue_message_t.
  */
-BaseType_t car_app_send_message(car_app_message_e msgID, float powerDriverMotor, float steringAngle);
+BaseType_t car_app_send_message(car_app_message_e msgID, float data);
 
 /**
  * @brief Config and start the car task
