@@ -74,7 +74,7 @@ void app_main(void)
     }
     ESP_ERROR_CHECK(ret);
 
-    rgb_led_config(GPIO_NUM_23, GPIO_NUM_22, GPIO_NUM_21, LEDC_TIMER_0, LEDC_CHANNEL_3, LEDC_CHANNEL_4, LEDC_CHANNEL_5);
+    rgb_led_config(GPIO_NUM_4, GPIO_NUM_2, GPIO_NUM_12, LEDC_TIMER_0, LEDC_CHANNEL_3, LEDC_CHANNEL_4, LEDC_CHANNEL_5);
     
     //start Wi_FI
     wifi_app_start("CAR_AP","password");

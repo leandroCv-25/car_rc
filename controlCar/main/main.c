@@ -5,6 +5,7 @@
 
 #include "esp_log.h"
 #include "nvs_flash.h"
+#include "nvs.h"
 
 #include "servo.h"
 #include "drive_motor.h"
@@ -12,13 +13,14 @@
 #include "comunication_app.h"
 #include "rgb_led.h"
 #include "headlight.h"
+#include "deep_sleep_app.h"
 
 static servo_config_t servoCfgLs = {
     .max_angle = 180,
     .min_width_us = 500,
     .max_width_us = 2500,
-    .freq = 50,
-    .gpio = GPIO_NUM_12,
+    .freq = 500,
+    .gpio = GPIO_NUM_13,
     .channel = LEDC_CHANNEL_2,
     .speed_mode = LEDC_HIGH_SPEED_MODE,
     .timer = LEDC_TIMER_2,
@@ -37,6 +39,8 @@ static drive_motor_config_t driveMotorConfig = {
 
 void app_main(void)
 {
+
+    ESP_LOGI("MAIN", "TESTE");
     // INITIALISE NVS
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
@@ -46,11 +50,13 @@ void app_main(void)
     }
     ESP_ERROR_CHECK(ret);
 
-    rgb_led_config(GPIO_NUM_23, GPIO_NUM_22, GPIO_NUM_21, LEDC_TIMER_0, LEDC_CHANNEL_3, LEDC_CHANNEL_4, LEDC_CHANNEL_5);
+    config_deep_sleep();
+
+    rgb_led_config(GPIO_NUM_21, GPIO_NUM_22, GPIO_NUM_23, LEDC_TIMER_0, LEDC_CHANNEL_3, LEDC_CHANNEL_4, LEDC_CHANNEL_5);
     headlight_config(GPIO_NUM_25);
     // start comunication
     comunication_app_start();
 
     // start car
-    car_init(&driveMotorConfig, &servoCfgLs);
+    car_init(&driveMotorConfig, &servoCfgLs);    
 }

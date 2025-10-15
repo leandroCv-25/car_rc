@@ -19,7 +19,7 @@ static esp_err_t set_drive_motor_duty(uint32_t duty, ledc_channel_t channel)
 {
     esp_err_t ret = ledc_set_duty(g_cfg.speed_mode, channel, duty);
     ret |= ledc_update_duty(g_cfg.speed_mode, channel);
-    ESP_LOGI(TAG, "set duty %i on channel %i", duty, channel);
+    ESP_LOGI(TAG, "set duty %lu on channel %i", duty, channel);
     return ret;
 }
 

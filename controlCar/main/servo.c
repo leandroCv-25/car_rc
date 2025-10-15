@@ -11,11 +11,13 @@ static servo_config_t g_cfg;
 
 static uint32_t calculate_duty(float angle)
 {
+    // ESP_LOGI(TAG,"Angle: %f",angle);
+
     angle += 25.5f;
     float angle_us = angle / g_cfg.max_angle * (g_cfg.max_width_us - g_cfg.min_width_us) + g_cfg.min_width_us;
     ESP_LOGI(TAG, "angle us: %f", angle_us);
     uint32_t duty = g_full_duty- (uint32_t)((float)g_full_duty * (angle_us) * g_cfg.freq / (1000000.0f));
-    ESP_LOGI(TAG, "duty: %i ", duty);
+    ESP_LOGI(TAG, "duty: %lu ", duty);
     return duty;
 }
 
@@ -61,6 +63,8 @@ esp_err_t servo_init(const servo_config_t *config)
     g_cfg = *config;
 
     g_full_duty = (1 << g_cfg.resolution) - 1;
+
+    ESP_LOGI(TAG, "Servo pwm frequency %lu",g_cfg.freq);
 
     ledc_timer_config_t ledc_timer = {
         .clk_cfg = LEDC_AUTO_CLK,

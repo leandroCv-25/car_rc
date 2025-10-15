@@ -32,6 +32,7 @@ static void car_app_task(void *pvParameters)
                 break;
             case CAR_DRIVE:
                 ESP_LOGI(TAG, "car drive");
+
                 drive_motor_forward(msg.data);
 
                 break;
@@ -41,6 +42,7 @@ static void car_app_task(void *pvParameters)
                 break;
             case CAR_STERING:
                 ESP_LOGI(TAG, "car stering");
+                ESP_LOGI(TAG,"Angle: %f",msg.data);
                 servo_set_angle(msg.data);
             default:
                 break;

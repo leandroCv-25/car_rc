@@ -15,7 +15,7 @@
 #include "espnow.h"
 #include "espnow_ctrl.h"
 
-#include "tasks_common.h"
+#include "device_params.h"
 #include "comunication_app.h"
 #include "rgb_led.h"
 

@@ -15,6 +15,8 @@ ledc_channel_t GREEN_Channel;
     the GPIO for each color, mode and timer configuration.
 */
 
+ledc_info_t ledc_ch[RGB_LED_CHANNEL_NUM];
+
 bool pwm_init_handle = false;
 
 bool pwm_config_handle = false;
@@ -119,6 +121,28 @@ void rgb_led_remote_error(void)
     }
 
     rgb_led_set_color(255, 0, 0);
+}
+
+
+void rgb_led_remote_error_wakeup(void)
+{
+    if (pwm_init_handle == false)
+    {
+        rgb_led_pwm_init();
+    }
+
+    rgb_led_set_color(200, 0, 200);
+}
+
+
+void rgb_led_remote_error_acce(void)
+{
+    if (pwm_init_handle == false)
+    {
+        rgb_led_pwm_init();
+    }
+
+    rgb_led_set_color(200, 125, 50);
 }
 
 // Color to indicate Wifi is connected
