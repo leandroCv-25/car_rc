@@ -1,7 +1,0 @@
-{
-    "idf.espIdfPathWin": "C:\\Users\\Leandro\\esp\\v5.4.2\\esp-idf",
-    "idf.toolsPathWin": "C:\\Users\\Leandro\\.espressif",
-    "idf.pythonInstallPath": "C:\\Users\\Leandro\\.espressif\\tools\\idf-python\\3.11.2\\python.exe",
-    "idf.flashType": "UART",
-    "idf.portWin": "COM4"
-}
