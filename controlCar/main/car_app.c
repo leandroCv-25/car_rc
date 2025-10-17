@@ -6,7 +6,7 @@
 #include "lwip/netdb.h"
 
 #include "car_app.h"
-#include "tasks_common.h"
+#include "device_params.h"
 
 static const char *TAG = "Car App";
 

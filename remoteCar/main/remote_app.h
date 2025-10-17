@@ -2,7 +2,6 @@
 #define REMOTE_APP_H_
 
 #include "driver/gpio.h"
-#include "driver/adc.h"
 
 typedef enum
 {
@@ -12,7 +11,7 @@ typedef enum
 } remote_msg_e;
 
 // Callback typedef
-typedef void (*app_remote_callback_t)(uint32_t *angle, uint32_t *speed, remote_msg_e *msg);
+typedef void (*app_remote_callback_t)(int32_t *angle, int32_t *speed, remote_msg_e *msg);
 
 void set_sensor_on();
 

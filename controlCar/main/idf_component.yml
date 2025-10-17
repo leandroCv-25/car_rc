@@ -3,6 +3,7 @@ dependencies:
   idf: ">=4.1"
 
   esp-now: ">=2.5.0"
+  espressif/button: ">=3.2.0"
 
   # Defining a dependency from the registry:
   # https://components.espressif.com/component/example/cmp

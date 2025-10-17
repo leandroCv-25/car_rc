@@ -19,7 +19,6 @@
 #include "mpu6050.h"
 
 #include "remote_app.h"
-#include "comunication_app.h"
 #include "device_params.h"
 
 static const char *TAG = "Remote App";
@@ -33,8 +32,8 @@ app_remote_callback_t _remoteCb;
 static void remote_app_task(void *pvParameters)
 {
     mpu6050_acce_value_t acce_value;
-    uint32_t aceleration;
-    uint32_t angle;
+    int32_t aceleration;
+    int32_t angle;
 
     while (true)
     {
@@ -49,13 +48,13 @@ static void remote_app_task(void *pvParameters)
                     mpu6050_sleep(mpu6050Handle);
                     ESP_LOGI(TAG, "acce x: %f\tacce y: %f\tacce z:%f\n", acce_value.acce_x, acce_value.acce_y, acce_value.acce_z);
 
-                    angle = (uint32_t)(atan(acce_value.acce_y / acce_value.acce_x));
+                    angle = (int32_t)(atan(acce_value.acce_y / acce_value.acce_x));
 
-                    ESP_LOGI(TAG, "angle: %lu", angle);
+                    ESP_LOGI(TAG, "angle: %ld", angle);
 
-                    aceleration = (uint32_t)(atan(acce_value.acce_z / acce_value.acce_x));
+                    aceleration = (int32_t)(atan(acce_value.acce_z / acce_value.acce_x));
 
-                    ESP_LOGI(TAG, "aceleration: %lu", aceleration);
+                    ESP_LOGI(TAG, "aceleration: %ld", aceleration);
 
                     _remoteCb(&angle, &aceleration, &msg);
                 }
@@ -70,19 +69,19 @@ static void remote_app_task(void *pvParameters)
             {
                 ESP_LOGE(TAG, "Error wake up");
                 angle = 0;
-                aceleration = 35;
+                aceleration = 3500;
                 msg = REMOTE_MSG_ERROR_WAKEUP;
                 _remoteCb(&angle, &aceleration, &msg);
 
                 vTaskDelay(5000 / portTICK_PERIOD_MS);
 
-                angle = 30;
-                aceleration = 5;
+                angle = 3000;
+                aceleration = 500;
                 _remoteCb(&angle, &aceleration, &msg);
 
                 vTaskDelay(5000 / portTICK_PERIOD_MS);
 
-                angle = 1000;
+                angle = 10000;
                 aceleration = 1505;
                 _remoteCb(&angle, &aceleration, &msg);
             }

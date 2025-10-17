@@ -9,7 +9,8 @@
 #include "driver/gpio.h"
 
 #include "deep_sleep_app.h"
-#include "tasks_common.h"
+
+#include "device_params.h"
 
 static void deep_sleep_task(void *args)
 {

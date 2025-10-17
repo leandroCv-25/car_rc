@@ -27,14 +27,14 @@ static void headLight_init(void)
     }
 }
 
-void headlight_toggle()
+void headlight_toggle(bool value)
 {
     if (headlight_init_handle == false)
     {
         headLight_init();
     }
 
-    headlight_status = !headlight_status;
+    headlight_status = value;
 
     gpio_set_level(headlightGPIO, headlight_status);
 }
